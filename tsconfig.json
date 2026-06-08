@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["node"],
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "noEmit": true,
+    "verbatimModuleSyntax": true
+  },
+  "comment": "Strict NodeNext typecheck of the tested Scolta integration (lib/tests). The Nuxt app (nuxt.config, pages/, app.vue) is typechecked by `nuxi typecheck` with Nuxt's generated tsconfig.",
+  "include": ["lib", "tests"],
+  "exclude": ["node_modules", ".nuxt", ".output", "public", "pages", "scripts", "app.vue", "nuxt.config.ts"]
+}
