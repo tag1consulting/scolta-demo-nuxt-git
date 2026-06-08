@@ -1,0 +1,8 @@
+# Mount the monorepo's packages so the demo's file:../../packages/* deps resolve
+# in-container. Mounted read-write because `npm install` chmods the
+# file: deps' bin (scolta-build/cli.js); only the bin mode is touched, the
+# pre-built dist is otherwise just read. Matches the Drupal/Django packages mount.
+services:
+  web:
+    volumes:
+      - ../../../packages:/var/packages

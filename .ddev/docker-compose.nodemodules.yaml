@@ -1,0 +1,8 @@
+# Keep node_modules in a container-only volume so the host's macOS install never
+# overlays the Linux container's.
+services:
+  web:
+    volumes:
+      - nodemodules:/var/www/html/node_modules
+volumes:
+  nodemodules:
