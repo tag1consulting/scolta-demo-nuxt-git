@@ -16,7 +16,23 @@ import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import yaml from "js-yaml";
 
-const CONTENT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "content");
+// Resolve the corpus dir. The module-relative path is correct when content.ts
+// runs directly (the scolta-build CLI), but Nitro bundles server routes and
+// rewrites import.meta.url, so the relative `../content` no longer points at the
+// project. Fall back to the project root (cwd) — content/ is shipped there — so
+// the same loader works both at build time and inside the Nitro dev server.
+function resolveContentDir(): string {
+  const candidates: string[] = [];
+  try {
+    candidates.push(path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "content"));
+  } catch {
+    // import.meta.url is not a file: URL in this runtime — skip the module-relative candidate.
+  }
+  candidates.push(path.resolve(process.cwd(), "content"));
+  return candidates.find((dir) => fs.existsSync(path.join(dir, "en"))) ?? candidates[candidates.length - 1]!;
+}
+
+const CONTENT_DIR = resolveContentDir();
 export const LANGS = ["es", "fr", "it", "de"] as const;
 export type TranslationLang = (typeof LANGS)[number];
 
