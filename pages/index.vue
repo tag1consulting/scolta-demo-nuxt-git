@@ -1,8 +1,7 @@
 <script setup lang="ts">
-// Home page: hero + Scolta search + section grid. The search widget lives in the
-// home main content (parity with the Drupal/Django demos), not the header.
+// Home page: hero + section grid. The search widget lives in the global header
+// (app.vue) on every page now, not in the home main content.
 const { data: meta } = await useFetch("/api/sections");
-const { data: browserConfig } = await useFetch("/api/scolta-config");
 </script>
 
 <template>
@@ -16,24 +15,13 @@ const { data: browserConfig } = await useFetch("/api/scolta-config");
       </p>
     </article>
 
-    <div class="home-search">
-      <ClientOnly>
-        <ScoltaSearch
-          v-if="browserConfig"
-          :config="browserConfig"
-          assets-path="/scolta"
-          pagefind-path="/pagefind/pagefind.js"
-        />
-      </ClientOnly>
-    </div>
-
     <div class="section-grid">
       <section v-for="s in meta?.nav ?? []" :key="s.section" class="section-card">
         <h2>{{ s.section }}</h2>
         <p class="section-card__count">{{ s.pages.length }} page(s)</p>
         <ul>
           <li v-for="p in s.pages.slice(0, 6)" :key="p.url">
-            <NuxtLink :to="p.url">{{ p.title }}</NuxtLink>
+            <a :href="p.url">{{ p.title }}</a>
           </li>
         </ul>
       </section>

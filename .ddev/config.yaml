@@ -11,11 +11,14 @@ use_dns_when_possible: true
 # deps in package.json resolve there. node_modules is a container-only named
 # volume (docker-compose.nodemodules.yaml) so the host's macOS install never
 # leaks into the Linux container.
-web_environment:
-  - NODE_ENV=development
-# First-start build: install the demo, copy the runtime assets into public/scolta,
-# and build the Pagefind index from the content source (content mode). Mirrors
-# the Drupal demo's `drush scolta:build` / Django's `manage.py scolta_build`.
+# NODE_ENV is intentionally NOT pinned to development: `nuxt build` and the Nitro
+# server default to production on their own, and leaving it unset keeps
+# `npm install` installing the devDependencies (tsx, typescript) the build needs.
+# First-start: install the demo, then build a real production bundle. `npm run
+# build` runs `prebuild` (gen:content → the build-time content manifest),
+# `nuxt build` (the Nitro node-server output bundles that manifest), then
+# `postbuild` (scolta:assets → public/scolta, scolta:build → the Pagefind index
+# in public/pagefind). Mirrors the Drupal/Django demos' build step.
 hooks:
   post-start:
     - exec: |
@@ -23,14 +26,22 @@ hooks:
         cd /var/www/html
         # The node_modules named volume mounts root-owned; hand it to the web user.
         sudo chown -R "$(id -u):$(id -g)" /var/www/html/node_modules
+        # Clear the readiness sentinel + previous build FIRST, so the daemon
+        # blocks until THIS build fully completes (nuxt writes the server entry
+        # before all of its chunks, so waiting on index.mjs alone can start node
+        # against a half-written .output → ERR_MODULE_NOT_FOUND).
+        rm -f .build-ready
+        rm -rf .output
         npm install --legacy-peer-deps --no-audit --no-fund
-        npm run scolta:assets
-        npm run scolta:build
-# Nuxt 3 dev server (registers the scolta-nuxt module: Nitro AI routes +
-# <ScoltaSearch>), mapped to the project URL by the router.
+        npm run build
+        # Touch the sentinel only after a complete, successful build (set -e).
+        touch .build-ready
+# Nuxt 3 Nitro production server (registers the scolta-nuxt module: Nitro AI
+# routes + <ScoltaSearch>), serving the build produced above. Waits for the
+# post-start readiness sentinel AND the server bundle before starting.
 web_extra_daemons:
   - name: "nuxt"
-    command: "bash -lc 'cd /var/www/html; until [ -x node_modules/.bin/nuxt ] && [ -f lib/content-manifest.ts ]; do sleep 2; done; exec node_modules/.bin/nuxt dev --host 0.0.0.0 --port 3000'"
+    command: "bash -lc 'cd /var/www/html; while [ ! -f .build-ready ] || [ ! -f .output/server/index.mjs ]; do sleep 2; done; exec env HOST=0.0.0.0 PORT=3000 NITRO_PORT=3000 node .output/server/index.mjs'"
     directory: /var/www/html
 web_extra_exposed_ports:
   - name: "nuxt"

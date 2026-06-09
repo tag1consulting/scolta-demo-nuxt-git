@@ -1,7 +1,14 @@
 <script setup lang="ts">
 const route = useRoute();
 const slug = Array.isArray(route.params.slug) ? route.params.slug.join("/") : String(route.params.slug);
-const { data: page } = await useFetch(`/api/doc/${slug}`);
+const { data: page, error } = await useFetch(`/api/doc/${slug}`);
+
+// Unknown slug -> 404 (parity with the Next demo's notFound() and the
+// Drupal/Django demos): /api/doc throws 404 for a missing page; surface that as
+// the page's own response status instead of rendering a blank 200.
+if (error.value || !page.value) {
+  throw createError({ statusCode: 404, statusMessage: "Page not found" });
+}
 
 const showMeta = computed(
   () => page.value && page.value.type !== "about" && (page.value.section || page.value.difficulty || page.value.gitVersion),

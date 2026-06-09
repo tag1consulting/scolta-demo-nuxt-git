@@ -64,10 +64,30 @@ a:hover { color: var(--color-accent-dark); }
 .site-brand__mark { color: var(--color-accent); font-size: 1.4rem; }
 .site-brand__name { letter-spacing: -.01em; }
 
-/* Search lives in the home-page main content (not the header), matching the
-   Drupal demo: full content width, filters left + results right are handled by
-   scolta.css from the package; the theme only sets container spacing. */
-.home-search { margin: 1.5rem 0 2rem; }
+/* Search lives in the global header on every page (parity with the Drupal /
+   Django demos), locked to that page's language. The input row sits inline in
+   the fixed-height header; the results + AI panel overlays the page as a
+   dropdown so the header never grows. */
+.site-search { position: relative; flex: 1 1 auto; max-width: 34rem; margin-left: auto; }
+.site-search .scolta-search-box { margin: 0; }
+.site-search .scolta-search-input-wrap input[type="text"] { background: #fff; }
+.site-search .scolta-expanded-terms,
+.site-search .scolta-layout,
+.site-search .scolta-no-results {
+  position: absolute; top: calc(100% + .5rem); right: 0;
+  width: min(48rem, calc(100vw - 2rem));
+  background: var(--color-surface, #fff); color: var(--color-text, #1b1f24);
+  border-radius: .6rem; box-shadow: 0 14px 40px rgba(0,0,0,.28);
+  max-height: 78vh; overflow: auto; padding: 1rem 1.25rem; z-index: 60;
+}
+.site-search .scolta-no-results { padding: 1.5rem 1.25rem; }
+
+@media (max-width: 720px) {
+  .site-search { max-width: none; }
+  .site-search .scolta-expanded-terms,
+  .site-search .scolta-layout,
+  .site-search .scolta-no-results { position: fixed; left: 1rem; right: 1rem; width: auto; }
+}
 
 /* ---------------- Language switcher ---------------- */
 .language-switcher { position: relative; margin-left: auto; }

@@ -1,6 +1,7 @@
 node_modules/
 .nuxt/
 .output/
+.build-ready
 public/pagefind/
 public/scolta/
 .scolta/

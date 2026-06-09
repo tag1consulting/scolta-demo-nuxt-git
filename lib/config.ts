@@ -23,6 +23,9 @@ export const scoltaConfigInit: NuxtScoltaConfigInit = {
     difficulty: "Difficulty level (Beginner, Intermediate, Advanced)",
     language: "Content language (en, es, fr, it, de)",
   },
+  // Lock search results to the active page's language (parity with the Drupal
+  // and Django demos); scolta.js reads the language from window.scolta.currentLanguage.
+  auto_language_filter: true,
   results_per_page: 12,
   // Content mode: write the index into public/ so it serves at /pagefind.
   stateDir: ".scolta",
