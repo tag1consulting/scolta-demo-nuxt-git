@@ -30,7 +30,7 @@ hooks:
 # <ScoltaSearch>), mapped to the project URL by the router.
 web_extra_daemons:
   - name: "nuxt"
-    command: "bash -lc 'cd /var/www/html; until [ -x node_modules/.bin/nuxt ]; do sleep 2; done; exec node_modules/.bin/nuxt dev --host 0.0.0.0 --port 3000'"
+    command: "bash -lc 'cd /var/www/html; until [ -x node_modules/.bin/nuxt ] && [ -f lib/content-manifest.ts ]; do sleep 2; done; exec node_modules/.bin/nuxt dev --host 0.0.0.0 --port 3000'"
     directory: /var/www/html
 web_extra_exposed_ports:
   - name: "nuxt"

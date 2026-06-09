@@ -9,12 +9,16 @@
   },
   "scripts": {
     "dev": "nuxt dev",
+    "gen:content": "tsx scripts/gen-content-manifest.ts",
+    "prebuild": "npm run gen:content",
     "build": "nuxt build",
     "generate": "nuxt generate",
-    "scolta:build": "tsx scripts/build-index.ts",
+    "scolta:build": "npm run gen:content && tsx scripts/build-index.ts",
     "scolta:assets": "scolta-build assets",
+    "pretest": "npm run gen:content",
     "test": "vitest run",
     "lint": "eslint .",
+    "pretypecheck": "npm run gen:content",
     "typecheck": "tsc --noEmit",
     "postbuild": "npm run scolta:assets && npm run scolta:build"
   },

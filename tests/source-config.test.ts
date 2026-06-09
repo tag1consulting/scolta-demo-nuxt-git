@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from "vitest";
 import { ContentItem } from "scolta";
-import { createScoltaApi } from "scolta-nuxt/core";
+import { createScoltaApi, NuxtScoltaConfig } from "scolta-nuxt/core";
 import { GitMasterySource, toContentItem } from "../lib/source.js";
 import { aboutPage, loadEnglishDocs } from "../lib/content.js";
 import { getConfig, scoltaConfigInit } from "../lib/config.js";
@@ -51,8 +51,15 @@ describe("config round-trip", () => {
 });
 
 describe("Nitro AI handler logic (createScoltaApi)", () => {
-  it("expandQuery degrades gracefully with no API key", async () => {
-    const api = createScoltaApi(getConfig(), { logger: { error() {} } });
+  it("expandQuery degrades gracefully when AI is unconfigured", async () => {
+    // Explicit provider + no key (bypassing the Amazee auto-provisioning default
+    // for determinism): expansion degrades to the original query, never errors.
+    const noAiConfig = NuxtScoltaConfig.fromObject({
+      ...scoltaConfigInit,
+      ai_provider: "anthropic",
+      ai_api_key: "",
+    });
+    const api = createScoltaApi(noAiConfig, { logger: { error() {} } });
     const r = await api.expandQuery({ query: "rebase" });
     expect(r.ok).toBe(true);
     expect((r.data as any).terms).toEqual(["rebase"]);

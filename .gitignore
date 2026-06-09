@@ -4,6 +4,7 @@ node_modules/
 public/pagefind/
 public/scolta/
 .scolta/
+lib/content-manifest.ts
 coverage/
 *.tsbuildinfo
 .DS_Store

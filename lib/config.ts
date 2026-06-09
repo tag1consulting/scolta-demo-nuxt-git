@@ -12,6 +12,10 @@ export const scoltaConfigInit: NuxtScoltaConfigInit = {
   site_name: "GitMastery",
   site_description: "Git documentation reference",
   preset: "reference",
+  // Auto-enable Scolta AI with no key: provision a free Amazee.ai LiteLLM trial
+  // on first use (parity with the Drupal/Django demos). Override with an
+  // explicit provider/key via SCOLTA_AI_PROVIDER + SCOLTA_API_KEY (env wins).
+  ai_provider: "amazee",
   ai_languages: ["en", "es", "fr", "it", "de"],
   filter_fields: ["section", "difficulty", "language"],
   filter_field_descriptions: {
