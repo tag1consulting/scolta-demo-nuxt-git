@@ -1,6 +1,6 @@
-# GitMastery (Wagtail) — Content Sources and Provenance
+# GitMastery (Nuxt) — Content Sources and Provenance
 
-This demo is the Django/Wagtail port of the Drupal `git-manual` demo. The content
+This demo is the Nuxt 3 port of the Drupal `git-manual` demo. The content
 corpus in `content/` is identical to the Drupal demo's `import/` YAML.
 
 ## Content Sources
@@ -29,16 +29,15 @@ Translation conventions: Git commands/flags/option names stay in English; common
 
 ## Tools Used
 
-- **Wagtail** (6.x) — CMS platform built on Django. https://wagtail.org
-- **Django** (4.2+) — web framework. https://djangoproject.com
-- **scolta-python** — the Scolta Python binding + in-process Pagefind indexer.
-- **scolta-django** — the Scolta Django/Wagtail adapter.
-- **Pagefind** — static client-side search index (built in-process by the pure-Python indexer). https://pagefind.app
+- **Nuxt 3** — Vue web framework. https://nuxt.com
+- **scolta** — the Scolta Node/TypeScript binding + in-process pure-TypeScript Pagefind indexer.
+- **scolta-nuxt** — the Scolta Nuxt module (Nitro AI routes + `<ScoltaSearch>` component).
+- **Pagefind** — static client-side search index (built in-process by the pure-TypeScript indexer). https://pagefind.app
 - **Claude (Anthropic)** — AI assistant for content generation, translation, and runtime query expansion / overviews.
 
 ## Scolta Integration
 
-This site is a demonstration dataset for the Scolta search-quality platform. The 1,426 pages across 5 languages provide a realistic corpus for testing technical documentation search relevance, query expansion and synonym matching, cross-language semantic search, and multi-section navigation. The Scolta configuration is in `gitmastery/settings.py` (`SCOLTA` dict).
+This site is a demonstration dataset for the Scolta search-quality platform. The 1,426 pages across 5 languages provide a realistic corpus for testing technical documentation search relevance, query expansion and synonym matching, cross-language semantic search, and multi-section navigation. The Scolta configuration is in `lib/config.ts` (shared by the index build and the Nuxt module), with a minimal CLI shim in `scolta.config.mjs`.
 
 ## License
 

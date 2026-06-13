@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Fix `SOURCES.md`: it was copied from the Django/Wagtail demo and never
+  reframed. Correct the title, the "port of" intro, the Tools Used list
+  (Nuxt 3 / scolta / scolta-nuxt instead of Wagtail / Django / scolta-python /
+  scolta-django), and the Scolta-config pointer (`lib/config.ts` +
+  `scolta.config.mjs`, not `gitmastery/settings.py`).
 - Port the GitMastery theme (from the Django/Drupal demos) to feature parity:
   sticky header with brand + collapsible language switcher, sidebar section nav
   with active-page highlighting, hero + section grid on the home page, themed
