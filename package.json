@@ -26,8 +26,8 @@
     "@types/js-yaml": "^4.0.9",
     "js-yaml": "^4.2.0",
     "nuxt": "^3.11.0",
-    "scolta": "file:../../packages/scolta-node",
-    "scolta-nuxt": "file:../../packages/scolta-nuxt",
+    "scolta": "^1.0.1",
+    "scolta-nuxt": "^1.0.1",
     "vue": "^3.4.0"
   },
   "devDependencies": {
