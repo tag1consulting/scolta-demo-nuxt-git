@@ -1,0 +1,177 @@
+/**
+ * GitMastery styling for Scolta's result list and search-as-you-type dropdown.
+ *
+ * Loaded after the vendored scolta.css, which is never edited. Two techniques
+ * only: override the documented custom properties, and style the classes the
+ * bundle already puts on its own markup. No selector here is more specific
+ * than one class.
+ *
+ * A plain stylesheet under public/ rather than a file in nuxt.config's `css`
+ * array, and inserted by plugins/scolta-theme.client.ts rather than by
+ * useHead(). <ScoltaSearch> appends the bundle's own <link> to <head> from its
+ * onMounted, so anything registered through the normal pipeline is EARLIER in
+ * the document than the stylesheet it means to override and loses every
+ * same-specificity redeclaration. The plugin watches for that link and puts
+ * this one directly after it. See the comment in the plugin.
+ *
+ * WHY THERE IS NO RESULT RENDERER HERE
+ *
+ * The Drupal build of this same corpus badges each result with its section,
+ * difficulty and Git version, and tags each suggestion row with its section.
+ * Both read those labels out of the fragment's `meta` map, and on this build
+ * path that map cannot contain them: the in-process TS indexer composes a
+ * page's `meta` from the title, the date and the item's `sortable` entries and
+ * never reads `ContentItem.metadata`
+ * (scolta-node `src/index/inverted-index-builder.ts`, the `combined` object).
+ * The PHP indexer and the Pagefind Node API path both carry it, which is why
+ * the Drupal and WordPress demos have badges and this one does not.
+ *
+ * So a renderer here would reserve a badge row and a suggestion gutter that
+ * nothing could ever fill, which reads as a broken dropdown rather than as a
+ * plain one. Smuggling the labels through `sortable` would work, and is not
+ * done: it declares free text as a sort dimension, so it would show up
+ * wherever sortable fields are offered, and it writes a corpus-wide pf_meta
+ * entry per key.
+ *
+ * The fix belongs in scolta-node. When it lands, this file gains the card
+ * rules and the plugin gains the renderer.
+ */
+
+/* Retheme Scolta's neutral palette to the Git orange the rest of the site is
+   built on. scolta.css declares these on :root; this file loads after it, so a
+   same-specificity redeclaration is all it takes. */
+:root {
+  --scolta-primary: var(--color-accent);
+  --scolta-primary-hover: var(--color-accent-dark);
+  --scolta-accent: var(--color-accent);
+  --scolta-bg: var(--color-bg-subtle);
+  --scolta-card-bg: var(--color-bg);
+  --scolta-text: var(--color-text);
+  --scolta-text-muted: var(--color-text-muted);
+  --scolta-border: var(--color-border);
+  --scolta-highlight: var(--color-accent-muted);
+  --scolta-badge-bg: var(--color-accent-muted);
+
+  /* Search-as-you-type. The seven documented knobs, nothing more. */
+  --scolta-sayt-bg: var(--color-bg);
+  --scolta-sayt-border: var(--color-border);
+  --scolta-sayt-shadow: 0 8px 24px rgba(17, 24, 39, 0.14);
+  --scolta-sayt-radius: 8px;
+  --scolta-sayt-max-height: 24rem;
+  --scolta-sayt-active-bg: var(--color-accent-muted);
+  --scolta-sayt-z-index: 60;
+}
+
+/* --------------------------------------------------------------------------
+ * Result list
+ *
+ * Typography and rhythm on the bundle's own card, matched to the Drupal build
+ * of this corpus so the two demos differ in framework and not in design.
+ * ----------------------------------------------------------------------- */
+
+.scolta-result-card {
+  border-left: 3px solid transparent;
+  transition: border-color 0.15s ease;
+}
+
+.scolta-result-card:hover {
+  border-left-color: var(--color-accent);
+}
+
+.scolta-result-title {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+/* scolta.css highlights an excerpt's <mark> and leaves a title's to the
+   browser default, so a hit was pale orange in the body and vivid yellow in
+   the heading right above it. Same treatment in both places. */
+.scolta-result-title mark {
+  background: var(--color-accent-muted);
+  color: inherit;
+  padding: 0.05em 0.15em;
+  border-radius: 2px;
+}
+
+.scolta-result-excerpt {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  line-clamp: 3;
+  overflow: hidden;
+}
+
+/* --------------------------------------------------------------------------
+ * Search-as-you-type dropdown
+ *
+ * Layout and rhythm only. The dropdown stays absolutely positioned inside
+ * .scolta-search-input-wrap, so opening and updating it shifts nothing.
+ * ----------------------------------------------------------------------- */
+
+.scolta-sayt {
+  font-family: var(--font-sans);
+  padding: 0.25rem 0;
+}
+
+.scolta-sayt-option {
+  padding: 0.55rem 0.9rem;
+  border-bottom: none;
+  border-left: 3px solid transparent;
+  transition: background-color 0.12s ease, border-color 0.12s ease;
+}
+
+.scolta-sayt-option:hover {
+  background: var(--color-bg-subtle);
+}
+
+.scolta-sayt-option-active {
+  border-left-color: var(--color-accent);
+}
+
+.scolta-sayt-kind {
+  color: var(--color-accent);
+  font-size: 0.95rem;
+}
+
+/* The bundle owns this row's layout: the kind glyph sits inline before the
+   title and the excerpt is indented past it. So the title is clipped as an
+   inline-block rather than made a block — display: block put every row's title
+   on its own line under the glyph.
+
+   Clipped at all because this corpus is five languages of Git documentation
+   and its titles are long: "git rebase — Commits auf einer anderen Basis
+   erneut anwenden" wrapped to two lines, which resizes the dropdown on the
+   keystroke that surfaces it. */
+.scolta-sayt-title {
+  display: inline-block;
+  max-width: calc(100% - 1.6rem);
+  vertical-align: bottom;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+/* A recent search is history, not a page: lighter and italic, so the two kinds
+   of row are told apart without reading the glyph. */
+.scolta-sayt-option-recent .scolta-sayt-kind {
+  color: var(--color-text-muted);
+}
+
+.scolta-sayt-option-recent .scolta-sayt-title {
+  font-weight: 400;
+  font-style: italic;
+}
+
+.scolta-sayt-excerpt {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-top: 0.1rem;
+}
