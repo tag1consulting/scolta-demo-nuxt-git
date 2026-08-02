@@ -2,7 +2,7 @@
   "name": "git-manual-nuxt",
   "version": "1.0.0",
   "private": true,
-  "description": "GitMastery (Nuxt) — multilingual Git documentation demo for Scolta",
+  "description": "GitMastery (Nuxt) \u2014 multilingual Git documentation demo for Scolta",
   "type": "module",
   "engines": {
     "node": ">=20"
@@ -14,7 +14,7 @@
     "build": "nuxt build",
     "generate": "nuxt generate",
     "scolta:build": "npm run gen:content && tsx scripts/build-index.ts",
-    "scolta:assets": "scolta-build assets",
+    "scolta:assets": "scolta-build assets && tsx scripts/vendor-dev-bundle.ts",
     "pretest": "npm run gen:content",
     "test": "vitest run",
     "lint": "eslint .",
@@ -27,6 +27,7 @@
     "js-yaml": "^4.2.0",
     "nuxt": "^3.11.0",
     "scolta": "^1.0.1",
+    "scolta-dev-bundle": "github:tag1consulting/scolta-node#main",
     "scolta-nuxt": "^1.0.1",
     "vue": "^3.4.0"
   },
