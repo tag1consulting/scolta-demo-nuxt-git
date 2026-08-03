@@ -25,7 +25,7 @@
   "dependencies": {
     "@types/js-yaml": "^4.0.9",
     "js-yaml": "^4.2.0",
-    "nuxt": "^3.11.0",
+    "nuxt": "^4.5.1",
     "scolta": "^1.0.1",
     "scolta-dev-bundle": "github:tag1consulting/scolta-node#main",
     "scolta-nuxt": "^1.0.1",
@@ -38,6 +38,6 @@
     "tsx": "^4.7.0",
     "typescript": "^5.4.0",
     "typescript-eslint": "^8.0.0",
-    "vitest": "^1.6.0"
+    "vitest": "^4.1.10"
   }
 }
