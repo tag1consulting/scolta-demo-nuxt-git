@@ -909,8 +909,7 @@
     
 
 - source_title: "git bisect — Use binary search to find the commit that introduced a bug"
-  title: "git bisect — Utiliser la recherche binaire pour trouver le commit ayant introduit\
-  \ un bug"
+  title: "git bisect — Utiliser la recherche binaire pour trouver le commit ayant introduit un bug"
   langcode: fr
   body: |
     <h2>Synopsis</h2>
