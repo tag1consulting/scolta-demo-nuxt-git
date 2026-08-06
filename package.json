@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "nuxt dev",
     "gen:content": "tsx scripts/gen-content-manifest.ts",
-    "prebuild": "npm run gen:content",
+    "prebuild": "npm run scolta:assets && npm run scolta:build",
     "build": "nuxt build",
     "generate": "nuxt generate",
     "scolta:build": "npm run gen:content && tsx scripts/build-index.ts",
@@ -19,8 +19,7 @@
     "test": "vitest run",
     "lint": "eslint .",
     "pretypecheck": "npm run gen:content",
-    "typecheck": "tsc --noEmit",
-    "postbuild": "npm run scolta:assets && npm run scolta:build"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@types/js-yaml": "^4.0.9",

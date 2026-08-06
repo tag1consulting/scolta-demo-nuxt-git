@@ -23,6 +23,17 @@
 # bump, and a corpus that half-loads is a demo with a fine-looking front page and
 # no content behind it. The translated page is asked for separately because
 # translations are where the corpus problems have actually turned up.
+#
+# Third, the index and asset assertions are served over HTTP rather than read off
+# disk on purpose, and that is what caught a real bug. The Scolta assets and the
+# Pagefind index used to be generated in `postbuild`, after `nuxt build` had
+# already snapshotted public/ into .output/public and baked its public-asset
+# manifest. Nitro serves only what is in that manifest, so a fresh clone built
+# once served 404s for /scolta/* and /pagefind/*: no search index at all. It went
+# unnoticed because a tree that has already built has the files in public/ when
+# the next build snapshots them, so a second build looks fine. Generating them in
+# `prebuild` fixes the ordering, and checking them over HTTP is what keeps it
+# fixed: reading the files off public/ would pass either way.
 set -euo pipefail
 
 PORT="${PORT:-8080}"
@@ -107,6 +118,15 @@ echo "PASS: doc page returned HTTP $DOC_CODE"
 TRANSLATED_CODE=$(await_success "$TRANSLATED_DOC_URL" 15) \
   || fail_status "translated doc page" "$TRANSLATED_DOC_URL" "$TRANSLATED_CODE"
 echo "PASS: translated doc page returned HTTP $TRANSLATED_CODE"
+
+# The runtime the search widget loads. It reaches the served site only if it was
+# in public/ before `nuxt build` snapshotted it, so a 404 here means the build
+# produced assets the deployed site cannot use.
+echo "==> Checking the Scolta runtime assets..."
+RUNTIME_CODE=$(await_success "${BASE_URL}/scolta/js/scolta.js" 10) \
+  || fail_status "Scolta runtime asset (not in Nitro's public-asset manifest)" \
+       "${BASE_URL}/scolta/js/scolta.js" "$RUNTIME_CODE"
+echo "PASS: Scolta runtime asset returned HTTP $RUNTIME_CODE"
 
 echo "==> Verifying search index..."
 META_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$PAGEFIND_ENTRY_URL" 2>/dev/null || true)
