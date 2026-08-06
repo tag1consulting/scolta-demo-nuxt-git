@@ -14,7 +14,9 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
-import yaml from "js-yaml";
+// js-yaml 5 is ESM-only and exports no default binding, so it is imported as a
+// namespace (matching the node: imports above).
+import * as yaml from "js-yaml";
 
 // Resolve the corpus dir. The module-relative path is correct when content.ts
 // runs directly (the scolta-build CLI), but Nitro bundles server routes and

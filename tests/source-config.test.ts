@@ -65,8 +65,16 @@ describe("Nitro AI handler logic (createScoltaApi)", () => {
     expect((r.data as any).terms).toEqual(["rebase"]);
   });
 
-  it("health reflects saved scoring", async () => {
+  it("health is status-only by default (no config disclosure)", async () => {
     const api = createScoltaApi(getConfig(), { logger: { error() {} } });
+    const h = await api.health();
+    expect(h["status"]).toBeTruthy();
+    expect(h["scoring"]).toBeUndefined();
+  });
+
+  it("health reflects saved scoring when healthDetail is on", async () => {
+    const detailed = NuxtScoltaConfig.fromObject({ ...scoltaConfigInit, healthDetail: true });
+    const api = createScoltaApi(detailed, { logger: { error() {} } });
     const h = await api.health();
     expect((h["scoring"] as any).RESULTS_PER_PAGE).toBe(12);
   });
